@@ -27,11 +27,14 @@ parameters = {
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-
+    global qsynth
     midi_ports = get_midi_ports(output=True)
     outputs = get_default_outputs()
 
-    qsynth.check_connections()
+    if qsynth:
+        qsynth.check_connections()
+    else:
+        qsynth = get_qsynth()
         
         
     if request.method == "POST":
@@ -39,11 +42,11 @@ def index():
         logger.info(request.form)
         parameters["slider_value"] = int(request.form["slider"])
         parameters["checkbox_status"] = "checkbox" in request.form
-        if parameters["midi_device"] != request.form["midi_device"]:
+        if parameters["midi_device"] != request.form["midi_device"] and qsynth:
             parameters["midi_device"] = request.form["midi_device"]
             qsynth.connect_midi_input(request.form["midi_device"])
         
-        if parameters["output_device"] != request.form["output_device"]:
+        if parameters["output_device"] != request.form["output_device"] and qsynth:
             parameters["output_device"] = request.form["output_device"]
             qsynth.connect_audio_output(request.form["output_device"])
         
