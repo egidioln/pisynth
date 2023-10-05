@@ -140,8 +140,9 @@ def get_qsynth():
         for name, port in get_audio_ports(output=True).items()
         if "qsynth" in name
     }
-
-    return QSynth(midi_in=midi_in, audio_out=audio_out)
+    if midi_in or audio_out:
+        return QSynth(midi_in=midi_in, audio_out=audio_out)
+    return None
 
 def get_default_outputs(stereo=True) -> Dict[str, jack.Port]:
     outputs = get_audio_ports(input=True)

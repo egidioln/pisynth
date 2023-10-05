@@ -4,6 +4,7 @@ from logging import getLogger
 from flask import Flask, request, render_template
 
 from pisynth.jackd.jackd_client import get_client, get_midi_ports, get_qsynth, get_default_outputs
+from pisynth.server.services_monitor import Monitor
 
 logger = getLogger(__name__)
 logger.setLevel("INFO")
@@ -12,6 +13,8 @@ current_path = Path(__file__).parent
 index_path = "index.html"
 qsynth = None
 output_device = None
+
+monitor = None
 
 # Initialize some default parameters
 parameters = {
@@ -27,7 +30,10 @@ def index():
 
     midi_ports = get_midi_ports(output=True)
     outputs = get_default_outputs()
+
     qsynth.check_connections()
+        
+        
     if request.method == "POST":
         # Update parameters based on form data
         logger.info(request.form)
@@ -46,8 +52,9 @@ def index():
     return render_template(index_path, parameters=parameters, midi_devices=midi_ports.keys(), output_devices=outputs.keys())
 
 def init():
-    global qsynth, output_device
+    global qsynth, output_device, monitor
     output_device = get_default_outputs()
+    monitor = Monitor()
     qsynth = get_qsynth()
     app.run(debug=True, host="0.0.0.0")
     
