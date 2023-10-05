@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parameter Setter</title>
+</head>
+<body>
+    <h1>Set Parameters</h1>
+    <form method="POST" id="parameter-form">
+        <label for="slider">Slider:</label>
+        <input type="range" id="slider" name="slider" min="0" max="100" value="{{ parameters['slider_value'] }}" onchange="updateParameter('slider')">
+        <br>
+        <label for="checkbox">Checkbox:</label>
+        <input type="checkbox" id="checkbox" name="checkbox" {% if parameters['checkbox_status'] %}checked{% endif %} onchange="updateParameter('checkbox')">
+        <br>
+        <label for="midi_device">midi_device:</label>
+        <select id="midi_device" name="midi_device" onchange="updateParameter('midi_device')">
+            {%for option_name in options%} 
+                  <option value="{{option_name}}" {% if parameters['midi_device'] == option_name %}selected{% endif %}>{{option_name}}</option>
+            {%endfor%} 
+        </select>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+        function updateParameter(parameterName) {
+            const formData = new FormData(document.getElementById('parameter-form'));
+            fetch('/', {
+                method: 'POST',
+                body: formData,
+            });
+        }
+    </script>
+</body>
+</html>
