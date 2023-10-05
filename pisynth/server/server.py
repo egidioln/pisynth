@@ -49,7 +49,7 @@ def init():
     global qsynth, output_device
     output_device = get_default_outputs()
     qsynth = get_qsynth()
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
     
 if __name__ == "__main__":
     init()
